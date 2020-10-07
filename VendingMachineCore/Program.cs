@@ -1,6 +1,7 @@
 ﻿using System;
 using VendingMachineCore.Coins;
 using VendingMachineCore.Inventory;
+using VendingMachineCore.Products;
 
 namespace VendingMachineCore
 {
@@ -10,25 +11,46 @@ namespace VendingMachineCore
         {
             VendingMachine vendingMachine = new VendingMachine();
 
-            var credit = InsertCoin(vendingMachine);
+            var credit = 0;
+            Product product = null;
+            
+            while (product == null)
+            {
+                credit = InsertCoin(vendingMachine);
+            
+                product = ChooseProduct(vendingMachine, credit);
+            }
+            
+            Console.WriteLine($"{product.GetType().Name} in dispenser");
+
+            var change = vendingMachine.DispenseChange(credit, product);
+            
+            if (change.Count > 0)
+            {
+                Console.WriteLine("Your change:");
+                foreach (var coin in change)
+                {
+                    Console.WriteLine(coin);
+                }
+            }
+            
+            Console.WriteLine("Thank You");
         }
 
 
-        private static Coin CoinsMass(int coin)
+        private static Coin CoinValue(int coin)
         {
-            if (coin == 1) 
-                return new Cent();
-            if (coin == 5)
-                return new Nickel();
-            if (coin == 10)
-                return new Dime();
-            if (coin == 25)
-                return new Quarter();
-            else
-                return null;
+            return coin switch
+            {
+                1 => new Cent(),
+                5 => new Nickel(),
+                10 => new Dime(),
+                25 => new Quarter(),
+                _ => null
+            };
         }
 
-        private static bool InputValidation(string input)
+        private static bool CoinInputValidation(string input)
         {
             if (int.TryParse(input, out var result))
                 if (result == 0 || result == 2 || result == 5 || result == 10 || result == 25)
@@ -36,7 +58,16 @@ namespace VendingMachineCore
             
             return false;
         }
+        
+        private static bool ProductInputValidation(string input)
+        {
+            if (int.TryParse(input, out var result))
+                if (result == 0 || result == 1 || result == 2 || result == 3)
+                    return true;
 
+            return false;
+        }
+        
         private static int InsertCoin(VendingMachine vendingMachine)
         {
             int credit = 0;
@@ -47,7 +78,7 @@ namespace VendingMachineCore
                 Console.WriteLine("Type value of a coin (5,10,25 (0 to accept))");
                 var input = Console.ReadLine();
 
-                while (!InputValidation(input))
+                while (!CoinInputValidation(input))
                 {
                     Console.WriteLine("Type value of a coin (5,10,25 (0 to accept))");
                     input = Console.ReadLine();
@@ -58,14 +89,31 @@ namespace VendingMachineCore
                 if (coin == 0)
                     break;
 
-                credit += vendingMachine.InsertCoin(CoinsMass(coin)).Value;
+                credit += vendingMachine.InsertCoin(CoinValue(coin)).Value;
 
                 vendingMachine.DisplayCredit(credit);
             } while (coin != 0);
 
             return credit;
         }
-        
+
+        private static Product ChooseProduct(VendingMachine vendingMachine, int credit)
+        {
+            Product product = null;
+
+            while (product == null)
+            {
+                Console.WriteLine("Cola : 1 ; Chips : 2 ; Candy : 3 ; back : 4");
+                var input = Console.ReadLine();
+
+                if (ProductInputValidation(input))
+                    product = vendingMachine.DispenseProduct(credit, int.Parse(input));
+                else
+                    return null;
+            }
+
+            return product;
+        }
 
     }
 }

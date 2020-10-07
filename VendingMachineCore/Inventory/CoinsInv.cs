@@ -15,7 +15,7 @@ namespace VendingMachineCore.Inventory
             {
                 {Coins.Nickel, 10},
                 {Coins.Dime, 10},
-                {Coins.Quarter, 10}
+                {Coins.Quarter, 0}
             };
         }
 
