@@ -4,7 +4,7 @@ namespace VendingMachineCore.Products
     {
         public Cola() : base()
         {
-            Prize = 1;
+            Prize = 100;
             Number = 1;
         }
     }

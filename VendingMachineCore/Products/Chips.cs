@@ -4,7 +4,7 @@ namespace VendingMachineCore.Products
     {
         public Chips() : base()
         {
-            Prize = 0.5;
+            Prize = 50;
             Number = 2;
         }
     }

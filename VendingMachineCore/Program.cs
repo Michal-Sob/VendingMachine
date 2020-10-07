@@ -8,15 +8,11 @@ namespace VendingMachineCore
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-            
             VendingMachine vendingMachine = new VendingMachine();
 
-            Console.WriteLine("Type value of a coin (1,5,10,25)");
-            var coin = int.Parse(Console.ReadLine());
-
-            vendingMachine.InsertCoin(CoinsMass(coin));
+            var credit = InsertCoin(vendingMachine);
         }
+
 
         private static Coin CoinsMass(int coin)
         {
@@ -31,5 +27,45 @@ namespace VendingMachineCore
             else
                 return null;
         }
+
+        private static bool InputValidation(string input)
+        {
+            if (int.TryParse(input, out var result))
+                if (result == 0 || result == 2 || result == 5 || result == 10 || result == 25)
+                    return true;
+            
+            return false;
+        }
+
+        private static int InsertCoin(VendingMachine vendingMachine)
+        {
+            int credit = 0;
+            int coin;
+            
+            do
+            {
+                Console.WriteLine("Type value of a coin (5,10,25 (0 to accept))");
+                var input = Console.ReadLine();
+
+                while (!InputValidation(input))
+                {
+                    Console.WriteLine("Type value of a coin (5,10,25 (0 to accept))");
+                    input = Console.ReadLine();
+                }
+
+                coin = int.Parse(input);
+
+                if (coin == 0)
+                    break;
+
+                credit += vendingMachine.InsertCoin(CoinsMass(coin)).Value;
+
+                vendingMachine.DisplayCredit(credit);
+            } while (coin != 0);
+
+            return credit;
+        }
+        
+
     }
 }

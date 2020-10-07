@@ -4,7 +4,7 @@ namespace VendingMachineCore.Products
     {
         public Candy() : base()
         {
-            Prize = 0.65;
+            Prize = 65;
             Number = 3;
         }
     }
